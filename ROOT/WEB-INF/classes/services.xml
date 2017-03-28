@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+    
+<beans>
+	<!-- 引入预配置信息 -->
+	<import resource="classpath:org/codehaus/xfire/spring/xfire.xml"/>
+	<!-- 引入XFire导出器 -->
+	<bean id="baseWebService" class="org.codehaus.xfire.spring.remoting.XFireExporter" abstract="true" lazy-init="true">
+		<property name="serviceFactory" ref="xfire.serviceFactory"></property>
+		<property name="xfire" ref="xfire"></property>
+	</bean>
+	<bean id="testWebService"
+		class="org.fphealthy.webservice.impl.InsertImpl">
+	</bean>
+	<bean id="testlogin"
+		class="org.fphealthy.webservice.impl.LoginImpl">
+	</bean>
+	<!-- 配置接口 -->
+	<bean id="Hello" parent="baseWebService">
+		<property name="serviceBean" ref="testWebService"></property>
+		<property name="serviceClass" value="org.fphealthy.webservice.Insert"></property>
+	</bean>
+	<bean id="Login" parent="baseWebService">
+		<property name="serviceBean" ref="testlogin"></property>
+		<property name="serviceClass" value="org.fphealthy.webservice.Login"></property>
+	</bean>
+	<!-- 定义访问的URL -->
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="urlMap">
+			<map>
+				<entry key="/Hello.ws">
+					<ref bean="Hello"/>
+				</entry>
+				<entry key="/Login.ws">
+					<ref bean="Login"/>
+				</entry>
+			</map>
+		</property>
+		
+	</bean>
+</beans>
